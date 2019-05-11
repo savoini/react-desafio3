@@ -8,10 +8,10 @@ import {
   Container, List, ListItem, Item, Avatar, Action,
 } from './styles';
 
-const User = ({ users, removeUserRequest }) => (
+const User = ({ github, removeUserRequest }) => (
   <Container>
     <List>
-      {users.map(user => (
+      {github.data.map(user => (
         <ListItem key={user.id}>
           <Avatar src={user.avatar} alt={user.name}>
             <img src={user.avatar} alt={user.name} />
@@ -35,20 +35,27 @@ const User = ({ users, removeUserRequest }) => (
 
 User.propTypes = {
   removeUserRequest: PropTypes.func.isRequired,
-  users: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number,
-      name: PropTypes.string,
-      login: PropTypes.string,
-      location: PropTypes.string,
-      avatar: PropTypes.string,
-    }),
-  ).isRequired,
+  github: PropTypes.shape({
+    loading: PropTypes.bool,
+    data: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number,
+        name: PropTypes.string,
+        location: PropTypes.string,
+        avatar: PropTypes.string,
+      }),
+    ),
+    error: PropTypes.string,
+  }).isRequired,
 };
+
+const mapStateToProps = state => ({
+  github: state.github,
+});
 
 const mapDispatchToProps = dispatch => bindActionCreators(GithubActions, dispatch);
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(User);

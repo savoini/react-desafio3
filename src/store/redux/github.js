@@ -1,9 +1,10 @@
 import { toast } from 'react-toastify';
 
 export const Types = {
-  ADD_REQUEST: 'ADD_REQUEST',
-  ADD_SUCCESS: 'ADD_SUCCESS',
-  ADD_ERROR: 'ADD_ERROR',
+  ADD_REQUEST: '@user/ADD_REQUEST',
+  ADD_SUCCESS: '@user/ADD_SUCCESS',
+  REMOVE_REQUEST: '@user/REMOVE_REQUEST',
+  ADD_ERROR: '@user/ADD_ERROR',
 };
 
 /**
@@ -33,9 +34,9 @@ export const Creators = {
   },
 
   removeUserRequest: (id) => {
-    toast.error(id);
+    toast.error('User remove');
     return {
-      type: Types.ADD_FAILURE,
+      type: Types.REMOVE_REQUEST,
       payload: { id },
     };
   },
@@ -60,6 +61,13 @@ export default function github(state = INITIAL_STATE, action) {
       };
     case Types.ADD_FAILURE:
       return { ...state, loading: false, error: action.payload.error };
+    case Types.REMOVE_REQUEST:
+      return {
+        ...state,
+        loading: false,
+        error: null,
+        data: [...state.data.filter(user => user.id !== action.payload.id)],
+      };
     default:
       return state;
   }

@@ -9,6 +9,8 @@ export function* addUserGithub(action) {
 
     const isDuplicate = yield select(state => state.github.data.find(user => user.id === data.id));
 
+    const mapa = yield select(state => state.mapa);
+
     if (isDuplicate) {
       yield put(GitHubActions.addUserFailure('Erro ao buscar usuário'));
     } else {
@@ -18,6 +20,8 @@ export function* addUserGithub(action) {
         login: data.login,
         location: data.location,
         avatar: data.avatar_url,
+        latitude: mapa.latitude,
+        longitude: mapa.longitude,
       };
 
       yield put(GitHubActions.addUserSuccess(repositoryData));

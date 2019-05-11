@@ -5,9 +5,9 @@ import { bindActionCreators } from 'redux';
 
 import MapGL, { Marker } from 'react-map-gl';
 
-import Users from '../../components/Users';
+import User from '../../components/User';
 
-import { Creators as GithubActions } from '../../store/redux/github';
+import { Creators as MapaActions } from '../../store/redux/mapa';
 import Search from '../../components/Search';
 
 class Main extends Component {
@@ -19,7 +19,6 @@ class Main extends Component {
       longitude: -46.6065452,
       zoom: 14,
     },
-    modal: true,
   };
 
   componentDidMount() {
@@ -33,8 +32,9 @@ class Main extends Component {
 
   handleMapClick = (e) => {
     const [longitude, latitude] = e.lngLat;
+    const { addPointRequest } = this.props;
 
-    alert(`Latitude: ${latitude} \nLongitude: ${longitude}`);
+    addPointRequest(latitude, longitude);
   };
 
   resize = () => {
@@ -49,74 +49,48 @@ class Main extends Component {
   };
 
   render() {
-    const { viewport, modal } = this.state;
+    const { viewport } = this.state;
+    const { github } = this.props;
+
     return (
       <Fragment>
-        <Users />
+        <Search />
+        <User />
         <MapGL
           {...viewport}
           onClick={this.handleMapClick}
           mapStyle="mapbox://styles/mapbox/basic-v9"
-          mapboxApiAccessToken="pk.eyJ1Ijoic2F2b2luaSIsImEiOiJjanZpNGk5ZWUwMjV4NDNsNmgzczM2b2t2In0.zf0F33QNzEGqfRP5Kda0ow"
+          mapboxApiAccessToken="pk.eyJ1Ijoic2F2b2luaSIsImEiOiJjanZpNGk51ZWUwMjV4NDNsNmgzczM2b2t2In0.zf0F33QNzEGqfRP5Kda0ow"
           onViewportChange={v => this.setState({ viewport: v })}
           style={{ position: 'relative' }}
         >
-          <Marker
-            latitude={-23.5439948}
-            longitude={-46.6065452}
-            onClick={this.handleMapClick}
-            captureClick
-          >
-            <img
-              style={{
-                borderRadius: 100,
-                width: 48,
-                height: 48,
-              }}
-              src="https://avatars2.githubusercontent.com/u/2254731?v=4"
-              alt=""
-            />
-          </Marker>
+          {github.data.map(user => (
+            <Marker
+              key={user.id}
+              latitude={user.latitude}
+              longitude={user.longitude}
+              onClick={this.handleMapClick}
+              captureClick
+            >
+              <img
+                style={{
+                  borderRadius: 100,
+                  width: 48,
+                  height: 48,
+                }}
+                src={user.avatar}
+                alt={user.name}
+              />
+            </Marker>
+          ))}
         </MapGL>
-        {modal && (
-          <div
-            className="modal fade"
-            id="exampleModalCenter"
-            tabIndex="-1"
-            role="dialog"
-            aria-labelledby="exampleModalCenterTitle"
-            aria-hidden="true"
-          >
-            <div className="modal-dialog modal-dialog-centered" role="document">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title" id="exampleModalCenterTitle">
-                    Modal title
-                  </h5>
-                  <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div className="modal-body">...</div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" data-dismiss="modal">
-                    Close
-                  </button>
-                  <button type="button" className="btn btn-primary">
-                    Save changes
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </Fragment>
     );
   }
 }
 
 Main.propTypes = {
-  addUserRequest: PropTypes.func.isRequired,
+  addPointRequest: PropTypes.func.isRequired,
   github: PropTypes.shape({
     loading: PropTypes.bool,
     data: PropTypes.arrayOf(
@@ -133,9 +107,10 @@ Main.propTypes = {
 
 const mapStateToProps = state => ({
   github: state.github,
+  mapa: state.mapa,
 });
 
-const mapDispatchToProps = dispatch => bindActionCreators(GithubActions, dispatch);
+const mapDispatchToProps = dispatch => bindActionCreators(MapaActions, dispatch);
 
 export default connect(
   mapStateToProps,

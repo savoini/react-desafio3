@@ -1,6 +1,15 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
+  width: 25%;
+  background: rgba(255, 255, 255, 0.8);
+  position: absolute;
+  left: 2%;
+  top: 3%;
+  height: 94%;
+  border-radius: 5px;
+  z-index: 1;
+  overflow: auto;
   margin: 1px;
   padding: 2px;
 `;
